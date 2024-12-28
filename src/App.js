@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { create, all } from 'mathjs';
 import { supabase } from './supabaseClient';
 import './App.css';
+
+const math = create(all);
 
 function App() {
   const [input, setInput] = useState('');
@@ -9,7 +12,7 @@ function App() {
   const handleClick = (value) => {
     if (value === '=') {
       try {
-        const calculationResult = eval(input);
+        const calculationResult = math.evaluate(input);
         setResult(calculationResult);
         saveCalculation(input, calculationResult);
         setInput('');
@@ -25,7 +28,7 @@ function App() {
   };
 
   const saveCalculation = async (expression, result) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('calculations')
       .insert([
         { expression, result }
